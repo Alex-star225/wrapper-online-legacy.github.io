@@ -1,0 +1,110 @@
+<html><script type="text/javascript" class="__REQUESTLY__SCRIPT">(function(namespace) {
+  window[namespace] = window[namespace] || {};
+  window[namespace].responseRules = {};
+
+  let open = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method) {
+    this.addEventListener('readystatechange', function() {
+      if (this.readyState === 4 && window[namespace].responseRules.hasOwnProperty(this.responseURL)) {
+        const responseRule = window[namespace].responseRules[this.responseURL];
+        const {response, id} = responseRule;
+        const responseType = this.responseType;
+        let customResponse;
+
+        customResponse = response.type === 'code' ? responseRule.evaluator({
+            method,
+            url: this.responseURL,
+            requestHeaders: this.requestHeaders,
+            requestData: this.requestData,
+            responseType: this.responseType,
+            response: this.response
+          }) : response.value;
+
+        Object.defineProperty(this, 'response', {
+          get: function () {
+            if (response.type === 'static' && responseType === 'json') {
+              return JSON.parse(customResponse);
+            }
+            return customResponse;
+          }
+        });
+
+        if (responseType === '' || responseType === 'text') {
+          Object.defineProperty(this, 'responseText', {
+            get: function () {
+              return customResponse;
+            }
+          });
+        }
+
+        window.postMessage({
+          from: 'requestly',
+          type: 'response_rule_applied',
+          id
+        }, window.location.href);
+      }
+    }, false);
+    open.apply(this, arguments);
+  };
+
+  let send = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.send = function(data) {
+    this.requestData = data;
+    send.apply(this, arguments);
+  };
+
+  let setRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+  XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
+    this.requestHeaders = this.requestHeaders || {};
+    this.requestHeaders[header] = value;
+    setRequestHeader.apply(this, arguments);
+  }
+})('__REQUESTLY__')</script><head>
+	<meta charset="UTF-8">
+	<link rel="icon" href="favicon.ico" type="https://assets.wrapper.online/image/png">
+	<title>Wrapper Online</title>
+	<meta name="description" content="Wrapper Online is a GoAnimate Private Server remake revived by the community!">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Wrapper Online">
+	<meta property="og:description" content="Wrapper Online is a GoAnimate Private Server remake revived by the community!">
+	<meta property="og:url" content="https://wrapper.online">
+	<meta property="og:image" content="https://assets.wrapper.online/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="https://assets.wrapper.onlinecss/modern-normalize.css">
+	<link rel="stylesheet" type="text/css" href="https://assets.wrapper.online/css/global.css">
+</head>
+<body>
+
+<header>
+	<div>
+		<h1 style="margin:0"><img id="logo" src="https://assets.wrapper.online/logo.png" alt="Wrapper: Online"></h1>
+	</div>
+</header>
+
+<main>
+
+<h2 id="welcome-to-the-home-of-the-asset-servers-for-wrapper-offline">its back for the 3rd time..</h2>
+
+<p>It’s most likely <a style="color:#777; cursor:pointer" id="cleverlydone" onclick="misterfreeman.play()" but="">you’re not supposed to be here</a>.<br>
+You probably got here through the magic known as the Network tab.<br>
+If you meant to come here, feel free to look around and do stuff. Maybe you’ll find a secret…</p>
+
+<p><a href="https://assets.wrapper.online/brokethebatter">make a cool video</a></p>
+<p><a href="https://github.com/2Epik4u/Wrapper-Online-assets">Click here to view the Wrapper: Online's asset server using github</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><a href="https://josephcrosmanplays532.github.io/wrapper-online-legacy.github.io/pages/html/list.html">click here to go to the video list</a></p>
+</main>
+
+
+</body></html>
